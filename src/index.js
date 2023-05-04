@@ -98,3 +98,9 @@ function onLoadMore(currentPage = 1) {
 	currentPage += 1
 	fetchCountries(currentPage)
 }
+const options = {
+	root: document.querySelector('.js-guard'),
+	rootmargin: "0px",
+	threshold: 1.0,
+}
+let observer = new IntersectionObserver(cb, options)

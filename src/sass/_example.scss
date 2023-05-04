@@ -7,6 +7,7 @@ body{
 	background-color:burlywood;
 	padding-top: 20px;
 	padding-bottom: 20px;
+	margin-bottom: 20px;
 	display: flex;
 	justify-content: center;
 }
@@ -47,4 +48,41 @@ cursor: pointer;
 		background-color: antiquewhite;
 		cursor: pointer;
 		}
+}
+
+.gallery{
+	padding-left: 50px;
+	padding-right: 50px;
+	display: flex;
+	justify-content: center;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+img{
+	display: block;
+	width: 320px;
+	height: 214px;
+	
+}
+.photo-card{
+	width: 320px;
+	height: 300px;
+	margin-left: 20px;
+	margin-bottom: 10px;
+	border: 0.6px solid black;
+	border-radius: 7px;
+	overflow: hidden;
+	position: relative;
+}
+.info{
+	position: absolute;
+	bottom: 0;
+	margin-left: -10px;
+	padding-left: 10px;
+	padding-right: 10px;
+	display: flex;
+	align-items: end;
+	&-item{
+		margin-left: 10px;
+	}
 }
