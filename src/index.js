@@ -19,6 +19,9 @@
 	- button 'load more' on start must be hidden
 	- use property 'totalHits' and at the ending of all photos hide button and show message 'We're sorry, but you've reached the end of search results.' 
 */
+import { Notify } from "notiflix"
+import { fetchCountries } from "./js/fetch";
+
 //!intializing html elements
 const refEl = {
 	formSearch: document.querySelector('.search-form'),
@@ -26,4 +29,72 @@ const refEl = {
 	btnSearch: document.querySelector('.search-btn'),
 	gallery: document.querySelector('.gallery'),
 	btnLoadMore: document.querySelector('.load-more')
+}
+let currentPage = 1;
+
+
+refEl.formSearch.addEventListener('submit', onSearch)
+
+refEl.btnLoadMore.hidden = true;
+
+function onSearch(evt) {
+	evt.preventDefault()
+	const search = refEl.inputForm.value.trim()
+
+	//check on empty input
+
+	if (!search) {
+		Notify.failure('Write a text what you want to find.')
+		return;
+	}
+	fetchCountries(search).then(data => {
+		if (!data.hits.length) {
+			Notify.failure("Sorry, there are no images matching your search query. Please try again.")
+			return
+		}
+		if (data.hits.length) {
+			innerMarkup(refEl.gallery, createMarkup(data.hits))
+			refEl.btnLoadMore.hidden = false
+			refEl.btnLoadMore.addEventListener('click', onLoadMore)
+		}
+	}
+	).catch()
+	return;
+}
+
+function createMarkup(arr) {
+	return arr.map(el => `<div class="photo-card">
+	<img src="${el.webformatURL}" alt="${el.tags}" loading="lazy" />
+	<div class="info">
+	  <p class="info-item">
+		<b>Likes</b>
+		${el.likes}
+	  </p>
+	  <p class="info-item">
+		<b>Views</b>
+		${el.views}
+	  </p>
+	  <p class="info-item">
+		<b>Comments</b>
+		${el.comments}
+	  </p>
+	  <p class="info-item">
+		<b>Downloads</b>
+		${el.downloads}
+	  </p>
+	</div>
+  </div>`).join('')
+}
+
+function innerMarkup(place, markup) {
+	return place.innerHTML = markup
+}
+
+function removeMarkup(place) {
+	return place.innerHTML = ''
+}
+
+function onLoadMore(currentPage = 1) {
+	currentPage += 1
+	fetchCountries(currentPage)
 }
