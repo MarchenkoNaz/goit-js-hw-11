@@ -40,7 +40,9 @@ cursor: pointer;
 .load-more{
 	margin-left: auto;
 	margin-right: auto;
+	margin-bottom: 50px;
 	padding: 10px;
+	width:400px;
 	border-radius:7px ;
 	border:1px solid black;
 	background-color: white;
@@ -51,38 +53,56 @@ cursor: pointer;
 }
 
 .gallery{
+	display: flex;
+
 	padding-left: 50px;
 	padding-right: 50px;
-	display: flex;
-	justify-content: center;
+	padding-bottom: 50px;
+	margin-left: -20px;
+
 	flex-direction: row;
 	flex-wrap: wrap;
+	&__link{
+		text-decoration: none;
+		color: black;
+}
+
 }
 img{
 	display: block;
 	width: 320px;
-	height: 214px;
-	
+	height: 212px;
 }
 .photo-card{
-	width: 320px;
-	height: 300px;
+	display: flex;
+	justify-content: center;
+
+	position: relative;
+
 	margin-left: 20px;
 	margin-bottom: 10px;
+
+	width: 320px;
+	height: 278px;
+
 	border: 0.6px solid black;
 	border-radius: 7px;
 	overflow: hidden;
-	position: relative;
+	cursor: pointer;
 }
 .info{
 	position: absolute;
 	bottom: 0;
+
 	margin-left: -10px;
 	padding-left: 10px;
 	padding-right: 10px;
+	border-top: 1px solid black;
+
 	display: flex;
 	align-items: end;
 	&-item{
 		margin-left: 10px;
 	}
 }
+
