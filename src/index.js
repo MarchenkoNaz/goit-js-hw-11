@@ -56,73 +56,70 @@ const options = {
 let observer = new IntersectionObserver(onPagination, options)
 
 function onPagination(entries, observer) {
-	console.log(entries);
-	entries.forEach(entry => {
+	entries.forEach(async entry => {
+		const searchTrim = search.value.trim()
+
 		if (entry.isIntersecting) {
 			currentPage += 1
-			fetchPhotos(search.value, currentPage).then(data => {
 
-				const totalPages = parseInt(data.totalHits / 40)
-
-				if (currentPage === totalPages) {
-					Notify.info(`We're sorry, but you've reached the end of search results.`)
+			try {
+				const data = await fetchPhotos(searchTrim, currentPage)
+				if (data.totalHits <= refEl.gallery.children.length) {
+					Notify.failure("We're sorry, but you've reached the end of search results.")
 					disconnectIntersectionObserver();
 					return
 				}
 
-				if (!data.hits.length) {
-					Notify.failure("Sorry, there are no images matching your search query. Please try again.")
-					return
-				}
-
-				if (data.hits.length) {
-					refEl.gallery.insertAdjacentHTML('beforeend', createMarkup(data.hits))
-					galleryLightBox.refresh()
-				}
+				refEl.gallery.insertAdjacentHTML('beforeend', createMarkup(data.hits))
+				galleryLightBox.refresh()
+				observer.observe(refEl.guard)
 			}
-			).catch(error => console.log(error))
-			return;
+			catch (err) {
+				Notify.failure('Error')
+				console.log(err);
+			}
 		}
 	})
-
 }
+
 function disconnectIntersectionObserver() {
 	if (observer) {
 		observer.disconnect();
 	}
 }
 
-function onSearch(evt) {
+async function onSearch(evt) {
+	evt.preventDefault()
 	removeMarkup(refEl.gallery)
 
+	currentPage = 1
 	const searchTrim = search.value.trim()
-	evt.preventDefault()
-	//check if empty input
+
 	if (!searchTrim) {
 		Notify.failure('Write what you want to find.')
 		return;
 	}
-	fetchPhotos(searchTrim, currentPage).then(data => {
-		const totalPages = parseInt(data.totalHits / 40)
 
-		if (!data.hits.length) {
+	disconnectIntersectionObserver();
+
+	try {
+		const data = await fetchPhotos(searchTrim, currentPage)
+
+		if (data.totalHits <= refEl.gallery.children.length) {
 			Notify.failure("Sorry, there are no images matching your search query. Please try again.")
 			return
 		}
 
-		if (data.hits.length) {
-			Notify.info(`Hooray! We found ${data.totalHits} images.`)
-			refEl.gallery.insertAdjacentHTML('beforeend', createMarkup(data.hits))
-			galleryLightBox.refresh()
+		Notify.info(`Hooray! We found ${data.totalHits} images.`)
 
-			if (data.page !== totalPages) {
-				observer.observe(refEl.guard)
-			}
-		}
+		refEl.gallery.insertAdjacentHTML('beforeend', createMarkup(data.hits))
+		galleryLightBox.refresh()
+		observer.observe(refEl.guard)
 	}
-	).catch(error => Notify.failure('Error'))
-	return;
+	catch (err) {
+		Notify.failure('Error')
+		console.log(err);
+	}
 }
-
 
 
