@@ -64,15 +64,17 @@ function onPagination(entries, observer) {
 
 			try {
 				const data = await fetchPhotos(searchTrim, currentPage)
+
+				refEl.gallery.insertAdjacentHTML('beforeend', createMarkup(data.hits))
+				galleryLightBox.refresh()
+				observer.observe(refEl.guard)
+
 				if (data.totalHits <= refEl.gallery.children.length) {
 					Notify.failure("We're sorry, but you've reached the end of search results.")
 					disconnectIntersectionObserver();
 					return
 				}
 
-				refEl.gallery.insertAdjacentHTML('beforeend', createMarkup(data.hits))
-				galleryLightBox.refresh()
-				observer.observe(refEl.guard)
 			}
 			catch (err) {
 				Notify.failure('Error')
